@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  LIFEQUEST design tokens
+  -----------------------
+  Palette (named):
+    --ink        #0B0A14  base background — near-black with a violet undertone
+    --panel      #17132A  card / HUD panel surface
+    --panel-2    #1F1A38  slightly raised panel surface (nested boxes)
+    --border     #3A2E5C  muted violet pixel-edge border
+    --ember      #FF6B35  primary accent — fire/forge, CTAs, quest highlights
+    --aether     #6FE3D9  secondary accent — XP, intelligence, "energy" glow
+    --gold       #F2C14E  currency, epic-tier accents
+    --vitality   #E5484D  HP/streak-danger red
+    --ink-text   #EDE9F7  primary text on dark surfaces
+    --muted-text #9C93B8  secondary text
+*/
+
+:root {
+  --ink: #0b0a14;
+  --panel: #17132a;
+  --panel-2: #1f1a38;
+  --border: #3a2e5c;
+  --ember: #ff6b35;
+  --aether: #6fe3d9;
+  --gold: #f2c14e;
+  --vitality: #e5484d;
+  --ink-text: #ede9f7;
+  --muted-text: #9c93b8;
+}
+
+@layer base {
+  html {
+    background-color: var(--ink);
+  }
+  body {
+    background-color: var(--ink);
+    color: var(--ink-text);
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  }
+  ::selection {
+    background-color: var(--ember);
+    color: var(--ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--aether);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .font-pixel {
+    font-family: var(--font-pixel), monospace;
+  }
+
+  /* Notched "pixel bevel" corners — an original, subject-specific structural
+     device (not a generic rounded card) that reads as a game-menu panel. */
+  .pixel-panel {
+    position: relative;
+    background-color: var(--panel);
+    border: 2px solid var(--border);
+    clip-path: polygon(
+      0 8px, 8px 8px, 8px 0,
+      calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px,
+      100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+      8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px)
+    );
+  }
+
+  .pixel-panel-raised {
+    background-color: var(--panel-2);
+  }
+
+  .pixel-button {
+    font-family: var(--font-pixel), monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    background-color: var(--ember);
+    color: var(--ink);
+    border: 2px solid #ffb088;
+    box-shadow: 0 4px 0 0 #b3421c;
+    padding: 0.85rem 1.5rem;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .pixel-button:hover {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 0 #b3421c;
+  }
+  .pixel-button:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 0 #b3421c;
+  }
+  .pixel-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .pixel-button-secondary {
+    font-family: var(--font-pixel), monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    background-color: transparent;
+    color: var(--ink-text);
+    border: 2px solid var(--border);
+    padding: 0.85rem 1.5rem;
+  }
+  .pixel-button-secondary:hover {
+    border-color: var(--aether);
+    color: var(--aether);
+  }
+
+  .bar-track {
+    position: relative;
+    height: 0.9rem;
+    background-color: #0e0c1c;
+    border: 2px solid var(--border);
+    overflow: hidden;
+  }
+  .bar-fill-xp {
+    height: 100%;
+    background: linear-gradient(90deg, #3fb3a8, var(--aether));
+    box-shadow: 0 0 8px 0 var(--aether);
+  }
+  .bar-fill-hp {
+    height: 100%;
+    background: linear-gradient(90deg, #b33d40, var(--vitality));
+  }
+  .bar-fill-gold {
+    height: 100%;
+    background: linear-gradient(90deg, #c99a2e, var(--gold));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
