@@ -4,6 +4,8 @@
 Built for the **LIFE RPG** hackathon problem statement: a full-stack web app that transforms
 mundane real-world tasks into an engaging RPG progression system.
 
+🎮 **Live Demo**: [https://lifequest-gray.vercel.app](https://lifequest-gray.vercel.app/)
+
 ---
 
 ## 1. Problem
