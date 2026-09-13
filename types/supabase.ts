@@ -1,14 +1,4 @@
 // LIFEQUEST — Supabase Database type
-//
-// This is hand-written to structurally match supabase/migrations/0001_init.sql
-// so the app has type safety without requiring a live Supabase project during
-// development. Once you've run `supabase link` against your real project,
-// regenerate the authoritative version with:
-//
-//   supabase gen types typescript --linked > types/supabase.ts
-//
-// and re-apply the `Database` import in lib/supabase/client.ts and server.ts
-// (no other code should need to change, since the shapes match).
 
 import type {
   Profile,
@@ -23,21 +13,85 @@ import type {
   DailyActivity,
 } from "@/types/database";
 
-type Row<T> = { Row: T; Insert: Partial<T>; Update: Partial<T> };
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
-      profiles: Row<Profile>;
-      characters: Row<Character>;
-      quests: Row<Quest>;
-      quest_completions: Row<QuestCompletion>;
-      items: Row<Item>;
-      inventory: Row<InventoryEntry>;
-      achievements: Row<Achievement>;
-      user_achievements: Row<UserAchievement>;
-      transactions: Row<Transaction>;
-      daily_activity: Row<DailyActivity>;
+      profiles: {
+        Row: Profile;
+        Insert: Partial<Profile>;
+        Update: Partial<Profile>;
+        Relationships: [];
+      };
+      characters: {
+        Row: Character;
+        Insert: Partial<Character>;
+        Update: Partial<Character>;
+        Relationships: [];
+      };
+      quests: {
+        Row: Quest;
+        Insert: Partial<Quest>;
+        Update: Partial<Quest>;
+        Relationships: [];
+      };
+      quest_completions: {
+        Row: QuestCompletion;
+        Insert: Partial<QuestCompletion>;
+        Update: Partial<QuestCompletion>;
+        Relationships: [];
+      };
+      items: {
+        Row: Item;
+        Insert: Partial<Item>;
+        Update: Partial<Item>;
+        Relationships: [];
+      };
+      inventory: {
+        Row: InventoryEntry;
+        Insert: Partial<InventoryEntry>;
+        Update: Partial<InventoryEntry>;
+        Relationships: [];
+      };
+      achievements: {
+        Row: Achievement;
+        Insert: Partial<Achievement>;
+        Update: Partial<Achievement>;
+        Relationships: [];
+      };
+      user_achievements: {
+        Row: UserAchievement;
+        Insert: Partial<UserAchievement>;
+        Update: Partial<UserAchievement>;
+        Relationships: [];
+      };
+      transactions: {
+        Row: Transaction;
+        Insert: Partial<Transaction>;
+        Update: Partial<Transaction>;
+        Relationships: [];
+      };
+      daily_activity: {
+        Row: DailyActivity;
+        Insert: Partial<DailyActivity>;
+        Update: Partial<DailyActivity>;
+        Relationships: [];
+      };
+    };
+    Views: {
+      [key: string]: {
+        Row: Record<string, unknown>;
+        Insert: Record<string, unknown>;
+        Update: Record<string, unknown>;
+        Relationships: [];
+      };
     };
     Functions: {
       complete_quest: {
@@ -56,5 +110,11 @@ export interface Database {
         Returns: { new_gold: number }[];
       };
     };
+    Enums: {
+      [key: string]: unknown;
+    };
+    CompositeTypes: {
+      [key: string]: unknown;
+    };
   };
-}
+};

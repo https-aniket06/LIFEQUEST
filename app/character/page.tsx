@@ -17,7 +17,7 @@ export default async function CharacterPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: profile }, { data: character }, { data: completions }, { data: equippedRows }] = await Promise.all([
+  const [{ data: profile }, { data: character }, { count: completionCount }, { data: equippedRows }] = await Promise.all([
     supabase.from("profiles").select("*").eq("id", user.id).single(),
     supabase.from("characters").select("*").eq("user_id", user.id).single(),
     supabase.from("quest_completions").select("id", { count: "exact", head: true }).eq("user_id", user.id),
@@ -64,7 +64,7 @@ export default async function CharacterPage() {
             <ul className="mt-4 space-y-2 text-sm">
               <li className="flex justify-between">
                 <span className="text-muted-text">Quests completed</span>
-                <span className="text-ink-text">{completions ?? 0}</span>
+                <span className="text-ink-text">{completionCount ?? 0}</span>
               </li>
               <li className="flex justify-between">
                 <span className="text-muted-text">Current streak</span>

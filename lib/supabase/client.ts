@@ -6,7 +6,7 @@ import type { Database } from "@/types/supabase";
  * bundled to the client, so the service-role key must NEVER appear here.
  */
 export function createClient() {
-  return createBrowserClient<Database>(
+  return createBrowserClient<any>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
