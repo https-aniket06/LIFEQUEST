@@ -47,7 +47,7 @@ export async function signUp(input: unknown): Promise<ActionResult<{ sessionCrea
       return { ok: false, error: "That email address looks invalid. Please double-check it." };
     }
 
-    return { ok: false, error: "Couldn't create your account. Please try again." };
+    return { ok: false, error: error.message ? `Sign-up error: ${error.message}` : "Couldn't create your account. Please try again." };
   }
 
   // When "Confirm email" is OFF in the Supabase project, signUp() returns an
