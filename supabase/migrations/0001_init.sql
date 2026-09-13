@@ -246,15 +246,31 @@ set search_path = public
 as $$
 declare
   candidate_username text;
+  final_username text;
 begin
-  candidate_username := lower(regexp_replace(split_part(new.email, '@', 1), '[^a-z0-9_]', '_', 'g'));
-  candidate_username := left(candidate_username, 20);
+  -- Lowercase FIRST, then strip invalid chars — doing it in the old order
+  -- meant regexp_replace ran on the original-case string and lower() at
+  -- the end was a no-op, so mixed-case emails produced needlessly mangled
+  -- usernames (e.g. "JohnDoe" -> "_ohn_oe" instead of "johndoe").
+  candidate_username := regexp_replace(lower(split_part(new.email, '@', 1)), '[^a-z0-9_]', '_', 'g');
+
+  -- Reserve room for the "_xxxx" suffix appended below so the final value
+  -- can never exceed the 20-char cap in the username_format check
+  -- constraint. The old code truncated candidate_username to 20 and THEN
+  -- appended "_xxxx" on top, so any email with a 16+ char local part
+  -- produced a 21-25 char username, tripped the check constraint, and
+  -- made the whole signup fail with a generic database error.
+  candidate_username := left(candidate_username, 15);
   if char_length(candidate_username) < 3 then
-    candidate_username := candidate_username || '_' || left(new.id::text, 6);
+    candidate_username := candidate_username || left(new.id::text, 3 - char_length(candidate_username));
   end if;
 
+  -- Belt-and-suspenders: final left(...,20) guarantees the constraint is
+  -- satisfied even if the logic above is ever changed later.
+  final_username := left(candidate_username || '_' || left(new.id::text, 4), 20);
+
   insert into public.profiles (id, username, display_name)
-  values (new.id, candidate_username || '_' || left(new.id::text, 4), split_part(new.email, '@', 1))
+  values (new.id, final_username, split_part(new.email, '@', 1))
   on conflict (id) do nothing;
 
   insert into public.characters (user_id)
