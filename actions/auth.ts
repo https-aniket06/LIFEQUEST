@@ -5,14 +5,14 @@ import { createClient } from "@/lib/supabase/server";
 import { signUpSchema, loginSchema } from "@/lib/validation/schemas";
 import type { ActionResult } from "@/actions/quests";
 
-export async function signUp(input: unknown): Promise<ActionResult> {
+export async function signUp(input: unknown): Promise<ActionResult<{ sessionCreated: boolean }>> {
   const parsed = signUpSchema.safeParse(input);
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid sign-up details." };
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
   });
@@ -50,7 +50,12 @@ export async function signUp(input: unknown): Promise<ActionResult> {
     return { ok: false, error: "Couldn't create your account. Please try again." };
   }
 
-  return { ok: true };
+  // When "Confirm email" is OFF in the Supabase project, signUp() returns an
+  // active session immediately — data.session is non-null. When it's ON,
+  // session is null until the confirmation link is clicked. The caller uses
+  // this to skip straight to the dashboard in the first case instead of
+  // showing a "check your email" screen that has nothing to check.
+  return { ok: true, data: { sessionCreated: !!data.session } };
 }
 
 export async function login(input: unknown): Promise<ActionResult> {

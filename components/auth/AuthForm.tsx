@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { login, signUp } from "@/actions/auth";
 
@@ -27,6 +28,12 @@ export function AuthForm({ mode }: AuthFormProps) {
         const result = await signUp({ email, password, confirmPassword });
         if (!result.ok) {
           setError(result.error ?? "Something went wrong.");
+        } else if (result.data?.sessionCreated) {
+          // "Confirm email" is off on this project, so signUp() already
+          // returned an active session — send them straight in instead of
+          // showing a "check your email" screen with nothing to check.
+          router.push("/dashboard");
+          router.refresh();
         } else {
           setSignedUp(true);
         }
@@ -48,8 +55,11 @@ export function AuthForm({ mode }: AuthFormProps) {
 
   if (signedUp) {
     return (
-      <div className="pixel-panel p-6 text-center">
+      <div className="pixel-panel space-y-3 p-6 text-center">
         <p className="text-ink-text">Check your email to confirm your account, then log in.</p>
+        <Link href="/login" className="inline-block text-sm text-aether underline underline-offset-2">
+          Go to log in
+        </Link>
       </div>
     );
   }
